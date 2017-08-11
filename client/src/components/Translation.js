@@ -259,7 +259,7 @@ translateAgain(e) {
   render() {
     return (
       <div id='translation-container'>
-      <div id='audio-box'><audio id='audio' /></div>
+      <p style={{textAlign: 'center'}}>Welcome to Speakeasy!  Choose your languages, then click the mic once to start recording, and again when you're done!</p>
         <div id='translation-div'>
           <div id='input-div'>
             {this.state.usernameEntry ? 
@@ -294,7 +294,6 @@ translateAgain(e) {
             : null}
             <form id='translation-form'>
               <textarea id='input-box' name='text' rows='3' value={this.state.inputText} className={this.state.textStyle} onChange={(e) => this.handleChange(e, 'inputText')}/>
-              <div id='tr-again-div'onClick={this.translateAgain}>Translate Again</div>
                 <div id='to-from-div'>
                     <select name='langFrom' className='langInput' value={this.state.langFrom} id='langFrom' onChange={(e) => {this.handleChange(e, 'langFrom')}}> 
                       <option value='en'>English</option>
