@@ -181,29 +181,23 @@ translateAgain(e) {
         };
 
         let visualize = (stream) => {
-          console.log('visualize');
           let context = new AudioContext();
           let analyser = context.createAnalyser();
           let src = context.createMediaStreamSource(stream);
           src.connect(analyser);
-
           looper = () => {
             if (this.state.isRecording) {
-              
               analyser.fftSize = 32;
               let fbcArray = new Uint8Array(analyser.frequencyBinCount);
               analyser.getByteFrequencyData(fbcArray);
               let total = fbcArray.reduce((previous, current) => current += previous);
               let volume = total / fbcArray.length;
               let color = 255 - (Math.floor(volume * 2));
-              console.log(color);
               if (volume > 30) {
                 micIcon.style = `color: rgb(${color}, ${color}, ${color})`
-                console.log(micIcon.style.color);
               } else {
                 micIcon.style = `color: white`;
               }
-              console.log(volume);
             }
           }
         }
