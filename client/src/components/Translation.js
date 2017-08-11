@@ -70,7 +70,17 @@ class Translation extends Component {
       console.log(message);
       this.setState({inputText: message,})
     })
+
+    io.on('recog-error', () => {
+      console.log('error');
+      this.setState({
+        rdyToRecord: true,
+        status: 'Recording error.  Please try again.',
+      });
+    })
+
   }
+
 
 componentDidMount() {
   this.setState({
@@ -164,10 +174,10 @@ translateAgain(e) {
 
   recorderInitialize() {
     let record = document.getElementById('start-recog');
+    let container = document.getElementById('recognize-button-container');
     let blobby;
     let looper;
     let interval;
-    let micIcon = document.getElementById('start-recog');
     if (navigator.mediaDevices) {
       console.log('getUserMedia supported.');
       let constraints = { audio: true };
@@ -192,11 +202,14 @@ translateAgain(e) {
               analyser.getByteFrequencyData(fbcArray);
               let total = fbcArray.reduce((previous, current) => current += previous);
               let volume = total / fbcArray.length;
-              let color = 255 - (Math.floor(volume * 2));
+              let color = (Math.floor(volume * 2));
+              let colorReverse = 255 - (Math.floor(volume * 2));
               if (volume > 30) {
-                micIcon.style = `color: rgb(${color}, ${color}, ${color})`
+                record.style = `color: rgb(${colorReverse}, ${colorReverse}, ${colorReverse})`
+                container.style = `background-color: rgb(255, ${color}, ${color})`;
               } else {
-                micIcon.style = `color: white`;
+                record.style = 'color: white';
+                container.style = 'background-color: rgb(255, 94, 91)';
               }
             }
           }
@@ -227,6 +240,7 @@ translateAgain(e) {
             recClass: 'off',
             status: 'Processing audio',
             isRecording: false,
+            rdyToRecord: true,
             volume: 255,
           }, () => {
               clearInterval(interval);
@@ -333,7 +347,7 @@ translateAgain(e) {
           <div id='controls'>
           <div id='bottom-row'>
             <div id='status-div'>{this.state.status}</div>
-            <div id='recognize-button-container' className={this.state.recClass}>
+            <div id='recognize-button-container' style={{backgroundColor:this.state.isRecording ? null : 'black'}}>
               <button id='start-recog'><i style={this.state.isRecording ? null : {color: 'white'}} className={`fa fa-microphone fa-3x`} aria-hidden="true"></i></button>
             </div>
               <button id='clear-btn' onClick={this.clear}>Clear</button>

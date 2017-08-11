@@ -57,7 +57,7 @@ const speechReq = {
 
 // Create a recognize stream
 const recognizeStream = speech.streamingRecognize(speechReq)
-  .on('error', console.error)
+  .on('error', () => {socket.emit('recog-error')})
   .on('data', (results) => {
     text = results.results[0].alternatives[0].transcript;
     console.log(`recognized: ${text}`);
