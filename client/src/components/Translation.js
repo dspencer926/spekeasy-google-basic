@@ -217,7 +217,7 @@ translateAgain(e) {
 
         visualize(stream);
 
-        record.onclick = () => {
+        container.onclick = () => {
           let interval = setInterval(looper, 45);
           let sStream = ss.createStream();
           let data = {
