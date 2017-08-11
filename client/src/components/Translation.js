@@ -23,6 +23,7 @@ class Translation extends Component {
       resultStyle: null,                                            //  ''
       status: null,                                                 //  status of app overall for user to view
       sendStyle: {backgroundColor: '#FF5E5B'},                      //  bkgrnd color of send button
+      volume: 255,
     }
     this.recorderInitialize = this.recorderInitialize.bind(this);
     this.translateAgain = this.translateAgain.bind(this);
@@ -164,6 +165,9 @@ translateAgain(e) {
   recorderInitialize() {
     let record = document.getElementById('start-recog');
     let blobby;
+    let looper;
+    let interval;
+    let micIcon = document.getElementById('start-recog');
     if (navigator.mediaDevices) {
       console.log('getUserMedia supported.');
       let constraints = { audio: true };
@@ -176,9 +180,38 @@ translateAgain(e) {
           blobby = blob;
         };
 
-        // visualize(stream);
+        let visualize = (stream) => {
+          console.log('visualize');
+          let context = new AudioContext();
+          let analyser = context.createAnalyser();
+          let src = context.createMediaStreamSource(stream);
+          src.connect(analyser);
+
+          looper = () => {
+            if (this.state.isRecording) {
+              
+              analyser.fftSize = 32;
+              let fbcArray = new Uint8Array(analyser.frequencyBinCount);
+              analyser.getByteFrequencyData(fbcArray);
+              let total = fbcArray.reduce((previous, current) => current += previous);
+              let volume = total / fbcArray.length;
+              let color = 255 - (Math.floor(volume * 2));
+              console.log(color);
+              if (volume > 30) {
+                micIcon.style = `color: rgb(${color}, ${color}, ${color})`
+                console.log(micIcon.style.color);
+              } else {
+                micIcon.style = `color: white`;
+              }
+              console.log(volume);
+            }
+          }
+        }
+
+        visualize(stream);
 
         record.onclick = () => {
+          let interval = setInterval(looper, 45);
           let sStream = ss.createStream();
           let data = {
             langFrom: this.state.langFrom,
@@ -196,14 +229,17 @@ translateAgain(e) {
           }
         else if (this.state.isRecording === true) {
           mediaRecorder.stop();
-          console.log('stopped')
-          ss.createBlobReadStream(blobby).pipe(sStream);
           this.setState({
             recClass: 'off',
             status: 'Processing audio',
             isRecording: false,
-          });
-          console.log("recorder stopped - status: ", this.state.status);
+            volume: 255,
+          }, () => {
+              clearInterval(interval);
+              console.log('stopped')
+              ss.createBlobReadStream(blobby).pipe(sStream);
+              console.log("recorder stopped - status: ", this.state.status);
+            })
           }
         }
       })
@@ -304,7 +340,7 @@ translateAgain(e) {
           <div id='bottom-row'>
             <div id='status-div'>{this.state.status}</div>
             <div id='recognize-button-container' className={this.state.recClass}>
-              <button id='start-recog'><i className={`${this.state.recClass} fa fa-microphone fa-3x`} aria-hidden="true"></i></button>
+              <button id='start-recog'><i style={this.state.isRecording ? null : {color: 'white'}} className={`fa fa-microphone fa-3x`} aria-hidden="true"></i></button>
             </div>
               <button id='clear-btn' onClick={this.clear}>Clear</button>
           </div>
