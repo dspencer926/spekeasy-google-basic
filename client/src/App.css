@@ -424,7 +424,6 @@ button {
   border: none;
   outline: none;
   border-radius: 15px;
-  cursor: pointer;
   user-select: none;
 }
 
@@ -435,7 +434,7 @@ button {
   border-radius: 100%;
   padding: 10px;
   margin: 0 10%;
-  
+  cursor: pointer;
 }
 
 .off {
