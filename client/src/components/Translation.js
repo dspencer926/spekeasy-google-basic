@@ -52,19 +52,6 @@ class Translation extends Component {
       })
     })
 
-    //receive message from other user?
-    // io.on('translatedResponse', (response) => {
-    //   console.log(response);
-    //   this.setState({
-    //     inputText: '',
-    //     responseBox: response,
-    //     rdyToRecord: true,
-    //   }, () => {
-    //     io.emit('received', this.state.chattingWith);
-    //     this.speak()
-    //   })
-    // });
-
     // receive voice recognition response
     io.on('recognized', (message) => {
       console.log(message);
@@ -121,44 +108,24 @@ translateAgain(e) {
   speak() {
     console.log('in speak function');
     let speakLang;
-    switch (this.state.convoMode? this.state.langFrom : this.state.langTo) {
-      case 'es': 
-        speakLang = 'Spanish Latin American Female';
-        break;
-      case 'fr': 
-        speakLang = 'French Female';
-        break;
-      case 'pt': 
-        speakLang = 'Brazilian Portuguese Female';
-        break;
-      case 'ru': 
-        speakLang = 'Russian Female';
-        break;
-      case 'hi': 
-        speakLang = 'Hindi Female';
-        break;
-      case 'it': 
-        speakLang = 'Italian Female';
-        break;
-      case 'ar': 
-        speakLang = 'Arabic Male';
-        break;
-      case 'zh-cn': 
-        speakLang = 'Chinese Female';
-        break;
-      case 'ja': 
-        speakLang = 'Japanese Female';
-        break;
-      case 'de': 
-        speakLang = 'Deutsch Female';
-        break;
-      case 'en': 
-        speakLang = 'US English Female';
-        break;
-      case 'vi': 
-        speakLang = 'Vietnamese Male';
-        break;
+    let inputLang = this.state.convoMode? this.state.langFrom : this.state.langTo;
+    function chooseLang(input) {
+      return ({
+      'es': 'Spanish Latin American Female',
+      'fr': 'French Female',
+      'pt': 'Brazilian Portuguese Female',
+      'ru': 'Russian Female',
+      'hi': 'Hindi Female',
+      'it': 'Italian Female',
+      'ar': 'Arabic Male',
+      'zh-cn': 'Chinese Female',
+      'ja': 'Japanese Female',
+      'de': 'Deutsch Female',
+      'en': 'US English Female',
+      'vi': 'Vietnamese Male',
+      }[input])
     }
+    speakLang = chooseLang(inputLang);
     let response = this.state.responseBox
     this.setState({speakLang: speakLang})
     console.log(this.state.responseBox, speakLang);
@@ -178,9 +145,7 @@ translateAgain(e) {
   recorderInitialize() {
     let record = document.getElementById('start-recog');
     let container = document.getElementById('recognize-button-container');
-    let blobby;
-    let looper;
-    let interval;
+    let newBlob, looper, interval;
     if (navigator.mediaDevices) {
       console.log('getUserMedia supported.');
       let constraints = { audio: true };
@@ -190,7 +155,7 @@ translateAgain(e) {
         mediaRecorder.audioChannels = 1;
         mediaRecorder.mimeType = 'audio/wav';
         mediaRecorder.ondataavailable = function (blob) {
-          blobby = blob;
+          newBlob = blob;
         };
 
         let visualize = (stream) => {
@@ -248,7 +213,7 @@ translateAgain(e) {
           }, () => {
               clearInterval(interval);
               console.log('stopped')
-              ss.createBlobReadStream(blobby).pipe(sStream);
+              ss.createBlobReadStream(newBlob).pipe(sStream);
               console.log("recorder stopped - status: ", this.state.status);
             })
           }
@@ -344,7 +309,6 @@ translateAgain(e) {
                       <option value='vi'>Vietnamese</option>
                     </select>
                   </div>
-                {/*<input id='submit-btn' type='submit'/>*/}
               <textarea id='result-box' name='result' rows='3' value={this.state.responseBox} className={this.state.resultStyle} onChange={(e) => this.handleChange(e, 'result')}></textarea>
             </form>
           </div>

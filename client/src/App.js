@@ -7,23 +7,17 @@ class App extends Component {
     super(props);
     this.state = {
       text: '',
-      audioClip: null,
       username: null,
       isLogged: false,
     }
-    this.recordState = this.recordState.bind(this);
   }
 
-  recordState(clip) {
-    this.setState({audioClip: clip});
-  }
 
 
   render() {
     return (
       <div className="App">
-        <Translation 
-        recordState={this.recordState} />
+        <Translation />
       </div>
     );
   }
