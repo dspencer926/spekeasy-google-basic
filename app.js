@@ -87,45 +87,11 @@ const recognizeStream = speech.streamingRecognize(speechReq)
             stsTranslation: stsTranslation,
             source: options.from, 
             target: options.to})
+        })
       })
     })
+  stream.pipe(recognizeStream);
   })
-stream.pipe(recognizeStream);
-})
-
-  socket.on('translate again', (data) => {
-    console.log('translate testing');
-    console.log(data);
-    let text = data.message;
-    let options = {
-      from: data.from,
-      to: data.to,
-    }
-    translateClient.translate(text, options)
-    .then((results) => {
-      translation = results[0];
-      console.log(`translated: ${translation}`);
-      options = {
-        from: options.to,
-        to: options.from,
-      }})
-      .catch((err) => {
-      console.error('ERROR:', err);
-    })
-    .then(() => {translateClient.translate(translation, options)
-      .then((results) => {
-        let stsTranslation = results[0];
-        console.log(`translated2: ${stsTranslation}`);
-        console.log('translation', translation)
-        console.log('sts translation', stsTranslation);
-        socket.emit('sts', {
-            translation: translation, 
-            stsTranslation: stsTranslation,
-            source: options.from, 
-            target: options.to})
-      })
-    })
-  });
 })
 
 app.get('/*', function (req, res) {
