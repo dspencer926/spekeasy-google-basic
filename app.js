@@ -93,7 +93,6 @@ const recognizeStream = speech.streamingRecognize(speechReq)
 stream.pipe(recognizeStream);
 })
 
-  //translation with socket? 
   socket.on('translate again', (data) => {
     console.log('translate testing');
     console.log(data);

@@ -155,6 +155,9 @@ translateAgain(e) {
       case 'en': 
         speakLang = 'US English Female';
         break;
+      case 'vi': 
+        speakLang = 'Vietnamese Male';
+        break;
     }
     let response = this.state.responseBox
     this.setState({speakLang: speakLang})
@@ -311,6 +314,7 @@ translateAgain(e) {
                       <option value='hi'>Hindi</option>
                       <option value='ko'>Korean</option>
                       <option value='tr'>Turkish</option>
+                      <option value='vi'>Vietnamese</option>
                     </select>
                   <div id='yellow'></div>
                   <div id='triangle-div'>
@@ -337,6 +341,7 @@ translateAgain(e) {
                       <option value='hi'>Hindi</option>
                       <option value='ko'>Korean</option>
                       <option value='tr'>Turkish</option>
+                      <option value='vi'>Vietnamese</option>
                     </select>
                   </div>
                 {/*<input id='submit-btn' type='submit'/>*/}
